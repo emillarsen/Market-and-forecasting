@@ -1,0 +1,56 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: Emil
+ * Creation Date: May 7, 2014 at 12:20:46 PM
+ *********************************************/
+ 
+/*********************************************
+External input 1. Number of loads used in
+step 2.
+*********************************************/
+Nload = 2;
+
+/*********************************************
+External input 2. Scaling factor used in
+steps 1 & 2.
+*********************************************/
+scaling_factor = 0.0250;
+
+/*********************************************
+External input 3. The variable changel found
+step 2.
+*********************************************/
+changel = [0,-2.10726046830491];
+
+/*********************************************
+External input 4. The variable
+price_rt_forecast found step 2.
+*********************************************/
+price_rt_forecast = [0,47.24];
+
+/*********************************************
+External input 5. Residual imbalance (same
+imbalance as step 2, but using the newest
+forecasts from Enfor).
+*********************************************/
+balance = 0.7;
+
+/*********************************************
+External inputs 6. gradient, max load, and
+min load for one step ahead. These come from
+Sintef's DR forecast module. This is the same
+as in step 2, but updated with the very latest
+input variables (weather, historical
+consumption and prices etc.)
+*********************************************/
+alpha = [0,5]; // price elasticity from Sintef
+
+p_load_min_raw = [0,1348]; // maximum consumption from Sintef
+
+p_load_max_raw = [0,720]; // minimum consumption from Sintef
+
+/*********************************************
+External inputs 7. Spot price in next five
+minutes.
+*********************************************/
+spot_price = 35.65;

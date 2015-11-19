@@ -1,0 +1,46 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: Emil
+ * Creation Date: Feb 26, 2014 at 1:08:15 PM
+ * Modified: Apr 30, 2014 at 12:11:00 PM
+ *********************************************/
+
+Ntime = 24;
+Ngen = 10;
+Nfive = 2016;
+scaling_factor = 0.0250;
+generator_total_capacity = 50;
+cost_load_shed = 1000;
+cost_wind_spill = 1;
+gap = 0.1;
+ramp = 3;
+
+/*********************************************
+External inputs needed.
+*********************************************/
+
+/*********************************************
+Input 1. 95% quantile of load from last 7 days
+(i.e. smart meter data) for a fixed number of
+houses. If being run at 13:00 on a Monday, this
+vector includes data from previous Monday
+midnight until this script is run. I.e. should
+contain 7*24*12 + ~12*13 values. Below just
+the first 7*24*12 values are included.
+*********************************************/
+
+SheetConnection historical_load_sheet("week_consumption.xlsx");
+week_load from SheetRead(historical_load_sheet,"A1:A2016");
+
+/*********************************************
+Input 2. Day-ahead wind energy forecast from
+Enfor. Hourly values starting for midnight to
+midnight. Should contain 24 values.
+*********************************************/
+
+SheetConnection da_wind_sheet("DA_wind_a.xlsx");
+p_da_wind from SheetRead(da_wind_sheet,"A1:A24");
+
+/*********************************************
+End external inputs needed.
+*********************************************/

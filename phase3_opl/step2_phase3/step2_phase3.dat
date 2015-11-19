@@ -1,0 +1,146 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: Emil
+ * Creation Date: Feb 26, 2014 at 2:14:09 PM
+ * Modified: Oct 10, 2014 at 12:11:00 PM 
+ *********************************************/
+
+Ntime = 36; //forecast horizon (3 hours)
+Nload = 2; //two loads in setup to accomodate phase 3
+min_on = 6; //minimum on-time of generators (30 mins = 6 periods)
+cost_wind_spill = 80000; //wind shedding cost
+cost_load_shed = 100000; //load shedding cost
+cost_frequency_control = 5000; //frequency control cost
+bid_percent = 0.8; //minimum percentage of bid to be accepted - reduce to make problem more feasible
+ramp_rate = 0.3; //ramp rate of generators in Denmark
+
+/*********************************************
+Input 1. Bus information about loads.
+*********************************************/
+//phase 2:
+//flex_load = [0,1]; //bus information about loads
+
+//phase 3:
+flex_load = [1,1]; //bus information about loads
+
+/*********************************************
+Input 2. Number of generators used in step 1.
+*********************************************/
+Ngen = 10;
+
+/*********************************************
+Input 3. Scaling factor from step 1.
+*********************************************/
+scaling_factor = 0.0250;
+
+/*********************************************
+Input 4. The spot price, in a five minute
+resolution. (Ntime 36 = 3 hours)
+*********************************************/
+SheetConnection spot_sheet("spot_five_min.xlsx");
+spot_price from SheetRead(spot_sheet,"A1:AJ1");
+
+/*********************************************
+External inputs 5. reference load and gradient
+for Ntime steps ahead (Ntime 36 = 3 hours).
+These come from Sintef's DR forecast module.
+*********************************************/
+//phase 2:
+//SheetConnection sintef_output_phase2("sintef_output_phase2.xlsx");
+//p_ref_raw from SheetRead(sintef_output_phase2,"A1:AJ2");
+//alpha_raw from SheetRead(sintef_output_phase2,"A3:AJ4");
+
+//phase 3:
+SheetConnection sintef_output_phase3("sintef_output_phase3.xlsx");
+p_ref_raw from SheetRead(sintef_output_phase3,"A1:AJ2");
+alpha_raw from SheetRead(sintef_output_phase3,"A3:AJ4");
+
+/*********************************************
+Input 6. How is the aggregated load split?
+I.e. phase 2 or phase 3 operation.
+*********************************************/
+//phase 2:
+// It should be 0,1, but it won't allow devide by zero.
+//consumption_split_ratio = [1,1];
+
+//phase 3:
+consumption_split_ratio = [0.05,0.95];
+
+/*********************************************
+Input 7. Day-ahead wind energy forecast from
+Enfor. Expanded to five minute resolution
+(Ntime 36 = 3 hours). This is the same as in
+step 1, but with a five minute resolution (not
+linearly interpolated!)
+*********************************************/
+SheetConnection wind_sheet("DA_wind_a_five_min.xlsx");
+p_da_wind from SheetRead(wind_sheet,"A1:AJ1");
+
+/*********************************************
+Input 8. Scheduled production from
+step 1. Expanded to five minute resolution
+(Ntime 36 = 3 hours).
+*********************************************/
+SheetConnection p_sch_sheet("p_sch_five_min.xlsx");
+p_sch from SheetRead(p_sch_sheet,"A1:AJ10");
+
+/*********************************************
+Input 9. Max generator capability from step 1.
+*********************************************/
+SheetConnection q_max_sheet("q_max.xlsx");
+q_max from SheetRead(q_max_sheet,"A1:A10");
+
+/*********************************************
+Input 10. Balance signal. This could be
+anything, but will probably be the expected
+wind power forecast error using Enfor data.
+*********************************************/
+SheetConnection balance_sheet("balance.xlsx");
+balance from SheetRead(balance_sheet,"A1:AJ1");
+
+/*********************************************
+Input 11. Instantaneous state of up and down
+regulation (p_ur & p_dr), as decided the last
+last time step 2 was run. Can be set to zero
+to always give a feasible solution and as a
+short-cut (undesirable in the long run, as we
+can't confirm market works without
+implementing this properly).
+*********************************************/
+SheetConnection p_initial_sheet("p_initial_sheet.xlsx");
+p_ur_initial from SheetRead(p_initial_sheet,"A1:A10");
+p_dr_initial from SheetRead(p_initial_sheet,"A1:A10");
+
+/*********************************************
+Input 12. When aggregating 90% of houses and
+scaling up the response to 1900 houses, what
+was the most recent consumption in kW? The
+load is split into two parts: the virtual
+feeder part (20-40 houses) and the other houses.
+*********************************************/
+//phase 2
+//p_l_measured_raw =[0,980];
+
+//phase 3
+p_l_measured_raw =[48.00,931.12];
+
+/*********************************************
+Input 13. The maximum capcity, in kW, for the
+virtual feeder, beyond which consumption should
+not go. This should be infinity for houses
+not receiving phase 3 prices.
+*********************************************/
+
+// phase 2:
+//p_l_max_raw = [infinity,infinity];
+
+// phase 3 (will need to be adjusted when data is available):
+p_l_max_raw = [48,infinity];
+
+/*********************************************
+Input 14. What is the threshold, in percent,
+beyond which prices should start rising on the
+virtual feeder? This can be 1 for houses not
+receiving phase 3 pricing.
+*********************************************/
+threshold_percent = [0.9,1];

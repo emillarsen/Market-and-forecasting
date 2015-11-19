@@ -1,0 +1,92 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: Emil
+ * Creation Date: Feb 26, 2014 at 2:14:09 PM
+ * Modified: Apr 30, 2014 at 12:11:00 PM 
+ *********************************************/
+
+Ntime = 36; //forecast horizon (3 hours)
+Nload = 2; //two loads in setup to accomodate phase 3
+min_on = 6; //minimum on-time of generators (30 mins = 6 periods)
+cost_wind_spill = 80000; //wind shedding cost
+cost_load_shed = 100000; //load shedding cost
+cost_frequency_control = 500; //frequency control cost
+flex_load = [0,1]; //bus information about loads
+bid_percent = 0.8; //minimum percentage of bid to be accepted - reduce to make problem more feasible
+
+/*********************************************
+External input 1. Number of generators used in
+step 1.
+*********************************************/
+Ngen = 10;
+
+/*********************************************
+External input 2. Scaling factor from step 1.
+*********************************************/
+scaling_factor = 0.0250;
+
+/*********************************************
+External input 3. The spot price, in a five
+minute resolution. (Ntime 36 = 3 hours)
+*********************************************/
+SheetConnection spot_sheet("spot_five_min.xlsx");
+spot_price from SheetRead(spot_sheet,"A1:AJ1");
+
+/*********************************************
+External inputs 4. reference load, gradient,
+max load, and min load for Ntime steps ahead
+(Ntime 36 = 3 hours). These come from Sintef's
+DR forecast module.
+*********************************************/
+SheetConnection sintef_parameters("sintef_output.xlsx");
+
+p_ref_raw from SheetRead(sintef_parameters,"A1:AJ2"); // p_ref from Sintef
+
+alpha from SheetRead(sintef_parameters,"A3:AJ4"); // price elasticity from Sintef
+
+p_load_min_raw from SheetRead(sintef_parameters,"A5:AJ6"); // maximum consumption from Sintef
+
+p_load_max_raw from SheetRead(sintef_parameters,"A7:AJ8"); // minimum consumption from Sintef
+
+/*********************************************
+External input 5. Day-ahead wind energy
+forecast from Enfor. Expanded to five minute
+resolution (Ntime 36 = 3 hours).
+*********************************************/
+SheetConnection wind_sheet("DA_wind_a_five_min.xls");
+p_da_wind from SheetRead(wind_sheet,"A1:AJ1");
+
+/*********************************************
+External input 6. Scheduled production from
+step 1. Expanded to five minute resolution
+(Ntime 36 = 3 hours).
+*********************************************/
+SheetConnection p_sch_sheet("p_sch_five_min.xlsx");
+p_sch from SheetRead(p_sch_sheet,"A1:AJ10");
+
+/*********************************************
+Input 7. Max generator capability from step 1.
+*********************************************/
+SheetConnection q_max_sheet("q_max.xlsx");
+q_max from SheetRead(q_max_sheet,"A1:A10");
+
+/*********************************************
+External input 8. Balance signal. This could
+be anything, but will probably be the expected
+wind power forecast error using Enfor data.
+*********************************************/
+SheetConnection balance_sheet("balance.xlsx");
+balance from SheetRead(balance_sheet,"A1:AJ1");
+
+/*********************************************
+External input 9. Instantaneous state of up
+and down regulation (p_ur & p_dr), as decided
+the last last time step 2 was run. Can be set
+to zero to always give a feasible solution and
+as a short-cut (undesirable in the long run,
+as we can't confirm market works without
+implementing this properly).
+*********************************************/
+SheetConnection p_initial_sheet("p_initial_sheet.xlsx");
+p_ur_initial from SheetRead(p_initial_sheet,"A1:A10");
+p_dr_initial from SheetRead(p_initial_sheet,"A1:A10");

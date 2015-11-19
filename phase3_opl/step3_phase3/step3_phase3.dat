@@ -1,0 +1,129 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: Emil
+ * Creation Date: May 7, 2014 at 12:20:46 PM
+ *********************************************/
+ 
+/*********************************************
+Input 1. Number of loads used in
+step 2.
+*********************************************/
+Nload = 2;
+
+/*********************************************
+Input 2. Load shedding cost (same as step 2)
+*********************************************/
+cost_load_shed = 100000;
+
+/*********************************************
+Input 3. Scaling factor used in steps 1 & 2.
+*********************************************/
+scaling_factor = 0.0250;
+
+/*********************************************
+Input 4. The variable price_rt_forecast found
+step 2.
+*********************************************/
+
+//phase 2:
+//price_rt_forecast = [265.23,276.8];
+
+//phase 3:
+price_rt_forecast = [287.2,276.1];
+
+/*********************************************
+Input 5. The variable changel found step 2.
+*********************************************/
+//phase 2:
+//changel = [0,-2.10726046830491];
+
+//phase 3:
+changel = [-0.3,-2.10726046830491];
+
+/*********************************************
+Input 6. Residual imbalance (similar imbalance
+to step 2, but using the newest forecasts from
+Enfor) and comparing with forecasts used in
+step 2. This should be a very small value.
+*********************************************/
+balance = 0.7;
+
+/*********************************************
+Input 7. Spot price in next five minutes.
+*********************************************/
+spot_price = 265.23;
+
+/*********************************************
+Input 8. How is the aggregated load split?
+I.e. phase 2 or phase 3 operation.
+*********************************************/
+
+//phase 2:
+// It should be 0,1, but it won't allow devide by zero.
+//consumption_split_ratio = [1,1];
+
+//phase 3:
+consumption_split_ratio = [0.05,0.95];
+
+/*********************************************
+Input 9. Sintef output; what is the consumption
+if the spot price is sent out.
+*********************************************/
+
+//phase 2:
+//p_ref_raw = [0,1030];
+
+//phase 3:
+p_ref_raw = [51.5,978.4];
+
+/*********************************************
+Inputs 10. DR parameter (gradient) for one
+step ahead. This is the same as in step 2, but
+updated with the very latest input variables
+(weather, historical consumption and prices etc.)
+*********************************************/
+alpha_raw = [1.146,1.146]; // price elasticity from Sintef
+
+/*********************************************
+Inputs 11. Bus information about loads.
+*********************************************/
+//phase 2:
+//flex_load = [0,1];
+
+//phase 3:
+flex_load = [1,1]; // virtual feeder active!
+
+/*********************************************
+Input 12: When aggregating houses and scaling
+the response to 1900 houses, what was the most
+recent consumption in kW? The load is split
+into two parts: the virtual feeder part (20-40
+houses) and the other houses.
+*********************************************/
+
+//phase 2:
+//p_l_measured_raw = [0,1020];
+
+//phase 3:
+p_l_measured_raw = [52,infinity];
+
+/*********************************************
+Input 13: What is the threshold, in percent,
+beyond which prices should start rising on the
+virtual feeder? This can be 1 for houses not
+receiving phase 3 pricing.
+*********************************************/
+threshold_percent = [0.9,1];
+
+/*********************************************
+Input 14: What is the maximum capcity, in kW,
+for the virtual feeder, beyond which
+consumption should not go? This should be
+infinity for houses not receiving phase 3 prices.
+*********************************************/
+
+// phase 2:
+//p_l_max_raw = [infinity,infinity];
+
+// phase 3 (will need to be adjusted when data is available):
+p_l_max_raw = [52,infinity];

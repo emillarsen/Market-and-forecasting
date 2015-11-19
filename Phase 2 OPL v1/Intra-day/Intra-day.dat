@@ -1,0 +1,56 @@
+/*********************************************
+ * OPL 12.6.0.0 Data
+ * Author: Emil
+ * Creation Date: Feb 26, 2014 at 2:14:09 PM
+ *********************************************/
+
+Ngen = 5;
+Ntime = 36;
+Nload = 2;
+
+// import stuff
+SheetConnection sheet("ID_sheet.xlsx");
+
+p_max = [5, 6, 6, 8, 9]; //pmax of generators
+
+ramp = [1.7, 2.04, 2.04, 2.72, 3.06]; //ramping of generators
+
+min_on = 6;
+
+cost_wind_spill = 80000; //wind shedding cost
+
+cost_load_shed = 100000; //load shedding cost
+
+cost_frequency_control = 500; //frequency control cost
+
+flex_load = [0,1]; //bus information about loads
+
+flex_pen = [0,100]; //how much load is flexible
+
+r = 0.2; //minimum proportion of bid to be accepted
+
+/*********************************************
+All data below should be in five minute resolution.
+If it has to be converted from hourly to five minute
+resolution, this should not be an interpolation,
+but step changes. I.e. spot price is the same for
+12 values, the p_sch is the same for 12 values etc.
+ *********************************************/
+ 
+spot_price from SheetRead(sheet,"B1:AK1");
+
+price_up from SheetRead(sheet,"B2:AK6");
+
+price_do from SheetRead(sheet,"B7:AK11");
+
+p_sch from SheetRead(sheet,"B12:AK16");
+
+quant_up from SheetRead(sheet,"B17:AK21");
+
+quant_do from SheetRead(sheet,"B22:AK26");
+
+alpha from SheetRead(sheet,"B27:AK27");
+
+p_wind from SheetRead(sheet,"B28:AK28");
+
+plreal from SheetRead(sheet,"B29:AK30");
